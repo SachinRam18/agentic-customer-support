@@ -35,6 +35,7 @@ interface ClientDashboardViewProps {
   onLogout: () => void;
   setSelectedSubTab: (tab: string) => void;
   selectedSubTab: string;
+  onOpenChat?: () => void;
 }
 
 export default function ClientDashboardView({
@@ -49,7 +50,8 @@ export default function ClientDashboardView({
   onAddTicket,
   onLogout,
   setSelectedSubTab,
-  selectedSubTab
+  selectedSubTab,
+  onOpenChat
 }: ClientDashboardViewProps) {
   
   // Local state for profile creation inputs
@@ -199,14 +201,14 @@ export default function ClientDashboardView({
                 </span>
               </div>
               <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-                Manage your secure cloud vault directory and priority support parameters. (Locker node: <span className="font-mono font-semibold text-slate-700">{activeCustomer.id}</span>)
+                Manage your storage, billing, and support. (Account: <span className="font-mono font-semibold text-slate-700">{activeCustomer.id}</span>)
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 font-sans self-start md:self-center">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-xs font-semibold text-slate-500 tracking-tight">Vault Synchronization Active</span>
+            <span className="text-xs font-semibold text-slate-500 tracking-tight">All systems operational</span>
             <button 
               onClick={onLogout}
               className="ml-4 rounded-xl border border-rose-200 hover:bg-rose-50 text-rose-700 text-xs font-bold px-3 py-1.5 transition-colors cursor-pointer"
@@ -221,39 +223,45 @@ export default function ClientDashboardView({
           
           {/* LEFT REUSABLE TAB NAVIGATION PANEL (Col: 3) */}
           <div className="lg:col-span-3 bg-white rounded-3xl border border-slate-200 p-4 space-y-1.5 shadow-xs">
-            <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 pb-2 border-b mb-2">
-              My Files & Support
+            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-3 pb-2 border-b border-slate-100 mb-2">
+              My Account
             </div>
 
-            {[
-              { id: "overview", label: "Vault Dashboard", icon: Layers },
-              { id: "subscription", label: "My Subscription", icon: Cloud },
-              { id: "orders", label: "My Active Orders", icon: CreditCard },
-              { id: "invoices", label: "My Invoices", icon: FileText },
-              { id: "chat", label: "Live Support Advisor", icon: HelpCircle, badge: "AI" },
-              { id: "tickets", label: "Support Tickets", icon: AlertCircle, count: clientTickets.length },
-              { id: "settings", label: "Account Settings", icon: Settings },
-            ].map((subTab) => {
+            {([
+              { id: "overview", label: "Dashboard", icon: Layers },
+              { id: "subscription", label: "Subscription", icon: Cloud },
+              { id: "orders", label: "Orders", icon: CreditCard },
+              { id: "invoices", label: "Invoices", icon: FileText },
+              { id: "chat", label: "Live Chat", icon: HelpCircle },
+              { id: "tickets", label: "Tickets", icon: AlertCircle, count: clientTickets.length },
+              { id: "settings", label: "Settings", icon: Settings },
+            ] as Array<{ id: string; label: string; icon: any; count?: number; badge?: string }>).map((subTab) => {
               const Icon = subTab.icon;
               const isSelected = selectedSubTab === subTab.id;
               return (
                 <button
                   key={subTab.id}
-                  onClick={() => setSelectedSubTab(subTab.id)}
-                  className={`flex w-full items-center justify-between rounded-xl px-3.5 py-3 text-sm font-medium tracking-tight transition-all cursor-pointer ${
+                  onClick={() => {
+                    if (subTab.id === "chat") {
+                      if (onOpenChat) onOpenChat();
+                    } else {
+                      setSelectedSubTab(subTab.id);
+                    }
+                  }}
+                  className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-[13px] font-medium tracking-tight transition-all cursor-pointer ${
                     isSelected
-                      ? "bg-blue-600 text-white font-semibold shadow-md shadow-blue-100"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-blue-50 text-blue-700 font-semibold border border-blue-100"
+                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className={`h-4.5 w-4.5 ${isSelected ? "text-white" : "text-slate-400"}`} />
+                    <Icon className={`h-4 w-4 ${isSelected ? "text-blue-600" : "text-slate-400"}`} />
                     <span>{subTab.label}</span>
                   </div>
 
                   {subTab.count !== undefined && subTab.count > 0 && (
                     <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-full ${
-                      isSelected ? "bg-white text-blue-600" : "bg-slate-100 text-slate-600"
+                      isSelected ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500"
                     }`}>
                       {subTab.count}
                     </span>
@@ -274,7 +282,22 @@ export default function ClientDashboardView({
           {/* RIGHT ACTION VIEWS CONTAINER (Col: 9) */}
           <div className="lg:col-span-9 space-y-6">
             
-            {/* 1. VAULT OVERVIEW SUBTAB */}
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-slate-400 font-medium">Dashboard</span>
+              <span className="text-slate-300">/</span>
+              <span className="text-slate-700 font-semibold">
+                {selectedSubTab === "overview" ? "Overview" :
+                 selectedSubTab === "subscription" ? "Subscription" :
+                 selectedSubTab === "orders" ? "Orders" :
+                 selectedSubTab === "invoices" ? "Invoices" :
+                 selectedSubTab === "chat" ? "Live Chat" :
+                 selectedSubTab === "tickets" ? "Tickets" :
+                 selectedSubTab === "settings" ? "Settings" : ""}
+              </span>
+            </div>
+
+            {/* 1. OVERVIEW SUBTAB */}
             {selectedSubTab === "overview" && (
               <div className="space-y-6 animate-fade-in">
                 
@@ -282,7 +305,7 @@ export default function ClientDashboardView({
                 <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                   <div className="md:col-span-8 space-y-3">
                     <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest block font-sans">
-                      Active Account Space Quota
+                      Storage Usage
                     </span>
                     <h2 className="text-xl font-bold text-slate-900">
                       You are using <span className="text-blue-600 font-extrabold">{usedStorage} GB</span> of your {storageLimit.label} allocation
@@ -303,7 +326,7 @@ export default function ClientDashboardView({
                   </div>
 
                   <div className="md:col-span-4 border-t md:border-t-0 md:border-l border-slate-150 pt-6 md:pt-0 md:pl-6 text-center md:text-left space-y-1">
-                    <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider block">LOCKER HEALTH</span>
+                    <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider block">ENCRYPTION</span>
                     <div className="text-emerald-600 font-extrabold text-base flex items-center justify-center md:justify-start gap-1.5">
                       <ShieldCheck className="h-5 w-5 text-emerald-500" />
                       <span>Secured (AES-256)</span>
@@ -316,8 +339,8 @@ export default function ClientDashboardView({
                 <div className="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
                   <div className="p-6 border-b border-slate-150 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <h3 className="font-sans text-base font-bold text-slate-900">My Secured Cloud Locker Vault</h3>
-                      <p className="text-slate-500 text-xs">Simulate document storage. Add, delete or query your records securely below.</p>
+                      <h3 className="font-sans text-base font-bold text-slate-900">My Files</h3>
+                      <p className="text-slate-500 text-xs">Your uploaded files and documents.</p>
                     </div>
 
                     <form onSubmit={handleFileUploadMock} className="flex items-center gap-2">
@@ -327,7 +350,7 @@ export default function ClientDashboardView({
                         className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:bg-slate-300 disabled:text-slate-500"
                       >
                         <Plus className="h-4 w-4" />
-                        <span>{isUploading ? `Uploading ${uploadProgress}%` : "Upload Mock Document"}</span>
+                        <span>{isUploading ? `Uploading ${uploadProgress}%` : "Upload File"}</span>
                       </button>
                     </form>
                   </div>
@@ -364,10 +387,10 @@ export default function ClientDashboardView({
                             <td className="py-3.5 px-6 text-slate-400 font-mono">{file.date}</td>
                             <td className="py-3.5 px-6 text-right">
                               <div className="flex items-center justify-end gap-1.5">
-                                <button className="p-1 rounded hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer" title="Preview Crypt Block">
+                                <button className="p-1 rounded hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer" title="Preview">
                                   <Eye className="h-4 w-4" />
                                 </button>
-                                <button className="p-1 rounded hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer" title="Download Decrypted Variant">
+                                <button className="p-1 rounded hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer" title="Download">
                                   <Download className="h-4 w-4" />
                                 </button>
                               </div>
@@ -460,8 +483,8 @@ export default function ClientDashboardView({
               <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 animate-fade-in font-sans">
                 
                 <div className="space-y-1.5 border-b pb-4">
-                  <h3 className="text-lg font-bold text-slate-900">Subscription Locker Quota limits</h3>
-                  <p className="text-slate-500 text-xs">Verify your active CloudBox file sync capacity parameters.</p>
+                  <h3 className="text-lg font-bold text-slate-900">Subscription Details</h3>
+                  <p className="text-slate-500 text-xs">View your plan details and manage your subscription.</p>
                 </div>
 
                 {/* Sub specifications list */}

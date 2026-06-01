@@ -11,6 +11,7 @@ interface HeaderProps {
   onLogout: () => void;
   setSelectedSubTab: (subTab: string) => void;
   selectedSubTab: string;
+  onOpenChat?: () => void;
 }
 
 export default function Header({
@@ -21,7 +22,8 @@ export default function Header({
   currentUser,
   onLogout,
   setSelectedSubTab,
-  selectedSubTab
+  selectedSubTab,
+  onOpenChat
 }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -47,6 +49,11 @@ export default function Header({
   ];
 
   const handleCustomerNav = (subTabId: string) => {
+    if (subTabId === "chat") {
+      if (onOpenChat) onOpenChat();
+      setIsOpen(false);
+      return;
+    }
     setCurrentTab("dashboard");
     setSelectedSubTab(subTabId);
     setIsOpen(false);

@@ -11,7 +11,6 @@ export default function ContactView() {
     text: ""
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [generatedPayload, setGeneratedPayload] = useState<any>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -25,26 +24,6 @@ export default function ContactView() {
       return;
     }
 
-    // Capture standard API-ready tool call payload representation
-    const toolCallPayload = {
-      action: "create_ticket",
-      arguments: {
-        customer: {
-          name: formData.name,
-          email: formData.email,
-        },
-        ticket: {
-          category: formData.category,
-          priority: formData.priority,
-          subject: formData.subject,
-          description: formData.text,
-          timestamp: new Date().toISOString()
-        }
-      },
-      schema_validation: "OK_STATUS"
-    };
-
-    setGeneratedPayload(toolCallPayload);
     setIsSubmitted(true);
   };
 
@@ -58,7 +37,6 @@ export default function ContactView() {
       text: ""
     });
     setIsSubmitted(false);
-    setGeneratedPayload(null);
   };
 
   return (

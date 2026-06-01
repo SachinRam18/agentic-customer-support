@@ -51,7 +51,7 @@ export default function DashboardView({
 
   // Staff audit logs
   const [auditLogs, setAuditLogs] = useState<Array<{ time: string; msg: string; actor: string }>>([
-    { time: "10:15:22", msg: "Initialized local sandbox CRM storage ledger schema", actor: "System Agent" },
+    { time: "10:15:22", msg: "Initialized system CRM database", actor: "System Agent" },
     { time: "10:20:01", msg: "Verified active E2EE AES-256 cloud encryption key buffers", actor: "Security Daemon" }
   ]);
 
@@ -125,12 +125,12 @@ export default function DashboardView({
             <button
               onClick={() => {
                 onResetDatabase();
-                pushLog("Reset entire local CRM sandbox database schema to original initialization vectors.");
+                pushLog("Reset entire CRM environment to default configuration.");
               }}
               className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs py-2.5 px-4 shadow-xs transition-colors cursor-pointer"
             >
               <RefreshCw className="h-4 w-4 text-slate-500" />
-              <span>Reset Sandbox Database</span>
+              <span>Reset Environment</span>
             </button>
           </div>
         </div>
@@ -539,7 +539,7 @@ export default function DashboardView({
         <div className="mt-8 bg-indigo-50/30 border border-indigo-100 rounded-3xl p-6 text-xs text-indigo-950 font-sans space-y-2">
           <p className="font-extrabold text-sm text-indigo-950">💡 Executive Help Desk Reference Guide:</p>
           <p className="leading-relaxed font-normal">
-            Actions executed in this back-office CRM directly mutate real-time client states. For example, selecting "Authorize Refund" inside the transaction ledger immediately refunds the customer and adjusts tax invoice clearances dynamically. You can test these live synchronization workflows by swapping to customer logins!
+            Actions executed in this back-office CRM directly mutate real-time client states. For example, selecting "Authorize Refund" inside the transaction ledger immediately refunds the customer and adjusts tax invoice clearances dynamically.
           </p>
         </div>
 

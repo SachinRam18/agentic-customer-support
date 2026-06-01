@@ -28,6 +28,16 @@ export default function App() {
   const [userRole, setUserRole] = useState<"customer" | "admin" | "guest">("guest");
   const [activeUserId, setActiveUserId] = useState<string>("");
   const [selectedSubTab, setSelectedSubTab] = useState<string>("overview");
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+
+  // Automatically open floating chat and redirect dashboard view
+  React.useEffect(() => {
+    if (selectedSubTab === "chat") {
+      setSelectedSubTab("overview");
+      setIsChatOpen(true);
+    }
+  }, [selectedSubTab]);
+
 
   // Centralized mutable state vectors (simulate synchronized database)
   const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
@@ -186,41 +196,6 @@ export default function App() {
       case "dashboard":
         if (isLoggedIn && userRole === "customer" && activeCustomer) {
           
-          // Support Chat Layout (Overlaid directly under private workspace for seamless style)
-          if (selectedSubTab === "chat") {
-            return (
-              <div className="bg-slate-50 min-h-[85vh] py-8 sm:py-10 font-sans">
-                <div className="mx-auto max-w-4xl px-4">
-                  <div className="mb-6 flex items-center justify-between">
-                    <div>
-                      <h2 className="text-xl font-extrabold text-slate-900 font-sans tracking-tight">
-                        Live Messaging Assistant
-                      </h2>
-                      <p className="text-xs text-slate-500">
-                        Chat safely. No technical logs or API trace outputs are broadcasted.
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setSelectedSubTab("overview")}
-                      className="rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-4 py-2 text-xs font-bold text-slate-700 shadow-xs transition cursor-pointer"
-                    >
-                      Return to Locker Vault
-                    </button>
-                  </div>
-                  <SaaSChatView
-                    activeCustomer={activeCustomer}
-                    orders={orders}
-                    invoices={invoices}
-                    tickets={tickets}
-                    onUpdateCustomerEmail={handleUpdateCustomerEmail}
-                    onCancelSubscription={handleCancelSubscription}
-                    onTriggerRefund={handleTriggerRefund}
-                    onAddTicket={handleAddTicket}
-                  />
-                </div>
-              </div>
-            );
-          }
 
           return (
             <ClientDashboardView
@@ -236,6 +211,7 @@ export default function App() {
               onLogout={handleLogout}
               setSelectedSubTab={setSelectedSubTab}
               selectedSubTab={selectedSubTab}
+              onOpenChat={() => setIsChatOpen(true)}
             />
           );
         } else if (isLoggedIn && userRole === "admin") {
@@ -278,6 +254,7 @@ export default function App() {
         onLogout={handleLogout}
         setSelectedSubTab={setSelectedSubTab}
         selectedSubTab={selectedSubTab}
+        onOpenChat={() => setIsChatOpen(true)}
       />
 
       {/* Canvas */}
@@ -285,6 +262,20 @@ export default function App() {
 
       {/* Footer */}
       <Footer setCurrentTab={setCurrentTab} />
+
+      {/* Persistent Floating Chatbot Overlay */}
+      <SaaSChatView
+        isOpen={isChatOpen}
+        setIsOpen={setIsChatOpen}
+        activeCustomer={activeCustomer}
+        orders={orders}
+        invoices={invoices}
+        tickets={tickets}
+        onUpdateCustomerEmail={handleUpdateCustomerEmail}
+        onCancelSubscription={handleCancelSubscription}
+        onTriggerRefund={handleTriggerRefund}
+        onAddTicket={handleAddTicket}
+      />
     </div>
   );
 }

@@ -35,7 +35,7 @@ export default function LoginView({ customers, onLogin, onRegister, setCurrentTa
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!regName.trim() || !regEmail.trim()) {
-      alert("Please provide both name and email to establish your sandbox storage locker.");
+      alert("Please provide both name and email to establish your CloudBox storage locker.");
       return;
     }
 

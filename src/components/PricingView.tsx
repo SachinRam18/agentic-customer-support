@@ -203,11 +203,11 @@ export default function PricingView({ setCurrentTab }: PricingViewProps) {
 
                   {isProfessional ? (
                     <button 
-                      onClick={() => setCurrentTab("sandbox")}
+                      onClick={() => setCurrentTab("login")}
                       className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 text-white font-semibold text-sm py-3 hover:bg-blue-700 hover:shadow-md transition-all cursor-pointer"
                     >
                       <BrainCircuit className="h-4.5 w-4.5" />
-                      <span>Simulate CRM Upgrades</span>
+                      <span>Get Started Now</span>
                     </button>
                   ) : (
                     <button 
