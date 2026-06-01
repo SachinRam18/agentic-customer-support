@@ -1,0 +1,6 @@
+{
+  "name": "CloudBox Secure Storage",
+  "description": "The official priority customer support center and interactive helpdesk for CloudBox - secure cloud storage and team workspace folder solutions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
