@@ -1,5 +1,15 @@
-import React, { useState, useMemo } from "react";
-import { Customer, Order, Invoice, Ticket, SubscriptionPlan, SubscriptionStatus } from "../types";
+import React, { useState, useMemo, useEffect } from "react";
+import { 
+  Customer, 
+  Order, 
+  Invoice, 
+  Ticket, 
+  SubscriptionPlan, 
+  SubscriptionStatus,
+  TimelineEvent,
+  NotificationRecord,
+  RiskScore
+} from "../types";
 import { 
   Cloud, 
   CreditCard, 
@@ -19,8 +29,13 @@ import {
   HelpCircle,
   ShieldCheck,
   MapPin,
-  Laptop
+  Laptop,
+  History,
+  Bell,
+  Mail
 } from "lucide-react";
+import TimelineView from "./TimelineView";
+
 
 interface ClientDashboardViewProps {
   activeCustomer: Customer;
@@ -64,6 +79,42 @@ export default function ClientDashboardView({
   // Settings profile email form
   const [tempSettingsEmail, setTempSettingsEmail] = useState(activeCustomer.email);
   const [settingsSuccess, setSettingsSuccess] = useState("");
+
+  // Enterprise features states
+  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
+  const [notifications, setNotifications] = useState<NotificationRecord[]>([]);
+  const [riskScore, setRiskScore] = useState<RiskScore | null>(null);
+
+  const fetchCustomerDetails = async () => {
+    try {
+      const riskRes = await fetch(`http://localhost:8000/risk/${activeCustomer.id}`);
+      if (riskRes.ok) {
+        const riskData = await riskRes.json();
+        setRiskScore(riskData);
+      }
+      
+      const timelineRes = await fetch(`http://localhost:8000/sessions/${activeCustomer.id}/timeline`);
+      if (timelineRes.ok) {
+        const timelineData = await timelineRes.json();
+        setTimelineEvents(timelineData);
+      }
+      
+      const notifRes = await fetch(`http://localhost:8000/notifications?customer_id=${activeCustomer.id}`);
+      if (notifRes.ok) {
+        const notifData = await notifRes.json();
+        setNotifications(notifData);
+      }
+    } catch (e) {
+      console.warn("Failed to fetch client enterprise records from API", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomerDetails();
+    const interval = setInterval(fetchCustomerDetails, 8000);
+    return () => clearInterval(interval);
+  }, [activeCustomer.id]);
+
 
   // Filter lists for current logged in customer
   const clientOrders = useMemo(() => {
@@ -192,13 +243,23 @@ export default function ClientDashboardView({
               referrerPolicy="no-referrer"
             />
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <h1 className="font-sans text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
                   Welcome back, <span className="text-blue-600">{activeCustomer.name}</span>
                 </h1>
                 <span className="rounded-full bg-blue-50 text-blue-700 px-2.5 py-0.5 text-xs font-bold border border-blue-100 uppercase tracking-tight">
                   {activeCustomer.plan}
                 </span>
+                {riskScore && (
+                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold border ${
+                    riskScore.level === "high" ? "bg-rose-50 text-rose-700 border-rose-150 animate-pulse" :
+                    riskScore.level === "medium" ? "bg-amber-50 text-amber-700 border-amber-150" :
+                    "bg-emerald-50 text-emerald-700 border-emerald-150"
+                  }`}>
+                    {riskScore.level === "high" ? "Account Health: Needs Attention" :
+                     riskScore.level === "medium" ? "Account Health: Fair" : "Account Health: Good"}
+                  </span>
+                )}
               </div>
               <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
                 Manage your storage, billing, and support. (Account: <span className="font-mono font-semibold text-slate-700">{activeCustomer.id}</span>)
@@ -234,6 +295,8 @@ export default function ClientDashboardView({
               { id: "invoices", label: "Invoices", icon: FileText },
               { id: "chat", label: "Live Chat", icon: HelpCircle },
               { id: "tickets", label: "Tickets", icon: AlertCircle, count: clientTickets.length },
+              { id: "timeline", label: "Activity Timeline", icon: History },
+              { id: "notifications", label: "Alert Notifications", icon: Bell, count: notifications.length },
               { id: "settings", label: "Settings", icon: Settings },
             ] as Array<{ id: string; label: string; icon: any; count?: number; badge?: string }>).map((subTab) => {
               const Icon = subTab.icon;
@@ -293,6 +356,8 @@ export default function ClientDashboardView({
                  selectedSubTab === "invoices" ? "Invoices" :
                  selectedSubTab === "chat" ? "Live Chat" :
                  selectedSubTab === "tickets" ? "Tickets" :
+                 selectedSubTab === "timeline" ? "Activity Timeline" :
+                 selectedSubTab === "notifications" ? "Alert Notifications" :
                  selectedSubTab === "settings" ? "Settings" : ""}
               </span>
             </div>
@@ -930,6 +995,62 @@ export default function ClientDashboardView({
                   </div>
                 </div>
 
+              </div>
+            )}
+
+            {/* 8. ACTIVITY TIMELINE SUBTAB */}
+            {selectedSubTab === "timeline" && (
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 animate-fade-in font-sans min-h-[400px] flex flex-col">
+                <div className="space-y-1.5 border-b pb-4">
+                  <h3 className="text-lg font-bold text-slate-900">Your Activity Timeline</h3>
+                  <p className="text-slate-500 text-xs">Verify your interaction and transactions logs with Cloudbot helper.</p>
+                </div>
+                <div className="flex-1 overflow-hidden bg-slate-50/20 border rounded-2xl">
+                  <TimelineView events={timelineEvents} />
+                </div>
+              </div>
+            )}
+
+            {/* 9. NOTIFICATIONS SUBTAB */}
+            {selectedSubTab === "notifications" && (
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 animate-fade-in font-sans">
+                <div className="space-y-1.5 border-b pb-4">
+                  <h3 className="text-lg font-bold text-slate-900">Locker Notifications History</h3>
+                  <p className="text-slate-500 text-xs">All dynamic email and SMS transaction records sent to your communication channels.</p>
+                </div>
+                
+                {notifications.length === 0 ? (
+                  <p className="text-xs text-slate-400 font-semibold italic text-center py-10">No alerts or notifications dispatched yet.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {notifications.map((n, idx) => (
+                      <div key={idx} className="border border-slate-200 rounded-2xl p-4 bg-slate-50/40 hover:bg-slate-100/50 transition-all text-xs space-y-2">
+                        <div className="flex items-center justify-between gap-2 font-bold">
+                          <span className={`px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-extrabold border ${
+                            n.type === "email" ? "bg-indigo-50 text-indigo-700 border-indigo-150" : "bg-cyan-50 text-cyan-700 border-cyan-150"
+                          }`}>
+                            {n.type} Alert
+                          </span>
+                          <span className="text-slate-400 font-mono text-[9px]">
+                            {new Date(n.sent_at).toLocaleString()}
+                          </span>
+                        </div>
+                        {n.subject && (
+                          <div className="font-extrabold text-slate-900">
+                            Subject: {n.subject}
+                          </div>
+                        )}
+                        <p className="whitespace-pre-line text-slate-650 font-semibold leading-relaxed">
+                          {n.body}
+                        </p>
+                        <div className="text-[10px] text-slate-400 font-bold flex justify-between">
+                          <span>Recipient: {n.recipient}</span>
+                          <span className="text-emerald-600">Status: {n.status}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

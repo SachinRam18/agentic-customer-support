@@ -137,6 +137,29 @@ export default function App() {
     setTickets((prev) => [ticket, ...prev]);
   };
 
+  const handleAddTicketMessage = (ticketId: string, text: string, sender: "customer" | "ai-agent" | "human-agent") => {
+    setTickets((prev) =>
+      prev.map((t) => {
+        if (t.id === ticketId) {
+          return {
+            ...t,
+            lastUpdatedDate: new Date().toISOString().replace("T", " ").substring(0, 16),
+            messages: [
+              ...t.messages,
+              {
+                sender,
+                text,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              }
+            ]
+          };
+        }
+        return t;
+      })
+    );
+  };
+
+
   const handleResetDatabase = () => {
     setCustomers(JSON.parse(JSON.stringify(initialCustomers)));
     setOrders(JSON.parse(JSON.stringify(initialOrders)));
@@ -181,6 +204,7 @@ export default function App() {
               onCancelSubscription={handleCancelSubscription}
               onTriggerRefund={handleTriggerRefund}
               onResetDatabase={handleResetDatabase}
+              onAddTicketMessage={handleAddTicketMessage}
             />
           );
         } else {
@@ -225,6 +249,7 @@ export default function App() {
               onCancelSubscription={handleCancelSubscription}
               onTriggerRefund={handleTriggerRefund}
               onResetDatabase={handleResetDatabase}
+              onAddTicketMessage={handleAddTicketMessage}
             />
           );
         } else {

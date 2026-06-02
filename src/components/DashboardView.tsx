@@ -19,6 +19,11 @@ import {
   TrendingUp,
   Tag
 } from "lucide-react";
+import AnalyticsDashboardView from "./AnalyticsDashboardView";
+import HumanAgentDashboardView from "./HumanAgentDashboardView";
+import AuditLogView from "./AuditLogView";
+import WorkflowVisualization from "./WorkflowVisualization";
+
 
 interface DashboardViewProps {
   customers: Customer[];
@@ -29,6 +34,7 @@ interface DashboardViewProps {
   onCancelSubscription: (id: string) => void;
   onTriggerRefund: (customerId: string, orderId: string) => void;
   onResetDatabase: () => void;
+  onAddTicketMessage: (ticketId: string, text: string, sender: "human-agent") => void;
 }
 
 export default function DashboardView({
@@ -39,10 +45,14 @@ export default function DashboardView({
   onUpdateCustomerEmail,
   onCancelSubscription,
   onTriggerRefund,
-  onResetDatabase
+  onResetDatabase,
+  onAddTicketMessage
 }: DashboardViewProps) {
   
-  const [activeTab, setActiveTab] = useState<"crm-customers" | "crm-orders" | "crm-invoices" | "crm-tickets" | "crm-logs">("crm-customers");
+  const [activeTab, setActiveTab] = useState<
+    "crm-customers" | "crm-orders" | "crm-invoices" | "crm-tickets" | "crm-logs" | 
+    "crm-analytics" | "crm-agent" | "crm-audit" | "crm-workflow"
+  >("crm-customers");
   const [searchTerm, setSearchTerm] = useState("");
   
   // Inline edit state
@@ -204,7 +214,11 @@ export default function DashboardView({
             { id: "crm-orders", label: "Transaction Orders", count: orders.length },
             { id: "crm-invoices", label: "Tax Invoices", count: invoices.length },
             { id: "crm-tickets", label: "Complaint Queue", count: tickets.length },
-            { id: "crm-logs", label: "Internal Audit Logs", count: auditLogs.length }
+            { id: "crm-logs", label: "Internal Audit Logs", count: auditLogs.length },
+            { id: "crm-analytics", label: "Support Analytics" },
+            { id: "crm-agent", label: "Human Agent Workspace" },
+            { id: "crm-audit", label: "Agent Audit Trail" },
+            { id: "crm-workflow", label: "Agent Workflow Graph" }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -531,6 +545,29 @@ export default function DashboardView({
                 ))}
               </div>
             </div>
+          )}
+
+          {/* SubTab 6: SUPPORT ANALYTICS */}
+          {activeTab === "crm-analytics" && (
+            <AnalyticsDashboardView />
+          )}
+
+          {/* SubTab 7: HUMAN AGENT DESK */}
+          {activeTab === "crm-agent" && (
+            <HumanAgentDashboardView 
+              tickets={tickets} 
+              onAddTicketMessage={onAddTicketMessage} 
+            />
+          )}
+
+          {/* SubTab 8: AGENT AUDIT TRAIL */}
+          {activeTab === "crm-audit" && (
+            <AuditLogView />
+          )}
+
+          {/* SubTab 9: WORKFLOW GRAPH */}
+          {activeTab === "crm-workflow" && (
+            <WorkflowVisualization />
           )}
 
         </div>
