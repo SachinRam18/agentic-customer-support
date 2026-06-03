@@ -6,8 +6,11 @@ Tracks sentiment trends and determines if escalation is required.
 
 from typing import List, Dict, Any, Tuple
 import json
+import logging
 from google.genai import types
 from backend.models import SentimentResult, SentimentLevel, ChatMessage
+
+logger = logging.getLogger("uvicorn.error")
 
 # Keywords for local fallback sentiment analysis
 NEGATIVE_KEYWORDS = [
@@ -104,7 +107,8 @@ JSON:"""
             escalation_recommended=escalate
         )
     except Exception as e:
-        print(f"Error in Gemini sentiment analysis: {e}, falling back to local analysis")
+        logger.error(f"Error in Gemini sentiment analysis: {e}, falling back to local analysis", exc_info=True)
+        print(f"Error in Gemini sentiment analysis: {e}, falling back to local analysis", flush=True)
         return analyze_sentiment_local(message)
 
 def get_session_sentiment_trend(messages: List[ChatMessage]) -> List[SentimentLevel]:

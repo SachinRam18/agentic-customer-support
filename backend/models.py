@@ -56,6 +56,7 @@ class ChatMessage(BaseModel):
     content: str
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
     sentiment: Optional["SentimentResult"] = None
+    model_used: Optional[str] = None
 
 class CustomerContext(BaseModel):
     customer_id: Optional[str] = None
@@ -88,6 +89,7 @@ class ChatResponse(BaseModel):
     notifications_sent: List["NotificationRecord"] = []
     rag_sources: List[str] = []
     agent_reasoning: str = ""
+    model_used: Optional[str] = None
 
 
 # ─────────────────────────────────────────────────────────────

@@ -1,7 +1,12 @@
+import sys
+import os
+
+# Add parent directory to sys.path so 'backend' can be imported when running from either root or backend folder
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import os
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -21,10 +26,80 @@ app.add_middleware(
 from typing import Optional
 from backend.models import ChatRequest, ChatResponse, AnalyticsDashboardData
 
+import logging
+import requests
+
+logger = logging.getLogger("uvicorn.error")
+
+class OpenRouterGeminiClient:
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+        self.models = OpenRouterModels(api_key)
+
+class OpenRouterModels:
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+
+    def generate_content(self, model: str, contents: str, config = None):
+        or_model = model
+        if not or_model.startswith("google/"):
+            or_model = f"google/{or_model}"
+            
+        logger.info(f"[OpenRouter LLM] Sending generation request to {or_model}...")
+        url = "https://openrouter.ai/api/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        response_format = None
+        if config and hasattr(config, "response_mime_type") and config.response_mime_type == "application/json":
+            response_format = {"type": "json_object"}
+            
+        max_tokens = 500
+        if config and hasattr(config, "max_output_tokens") and config.max_output_tokens:
+            max_tokens = config.max_output_tokens
+            
+        data = {
+            "model": or_model,
+            "messages": [
+                {"role": "user", "content": contents}
+            ],
+            "max_tokens": max_tokens
+        }
+        if response_format:
+            data["response_format"] = response_format
+            
+        try:
+            response = requests.post(url, headers=headers, json=data)
+            if response.status_code != 200:
+                error_msg = f"[OpenRouter LLM] Error response {response.status_code}: {response.text}"
+                logger.error(error_msg)
+                raise Exception(error_msg)
+                
+            res_json = response.json()
+            text = res_json['choices'][0]['message']['content']
+            logger.info(f"[OpenRouter LLM] Response successfully generated.")
+            
+            class ResponseWrapper:
+                def __init__(self, text):
+                    self.text = text
+                    
+            return ResponseWrapper(text)
+        except Exception as e:
+            logger.error(f"[OpenRouter LLM] Failed to generate response: {e}")
+            raise
+
 def get_gemini_client():
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key or api_key == "your_gemini_key_here":
         raise ValueError("GEMINI_API_KEY is not configured or is the default placeholder. Please update the .env file in the project root.")
+    
+    if api_key.startswith("sk-or-v1-"):
+        logger.info("[get_gemini_client] Using OpenRouter API wrapper client.")
+        return OpenRouterGeminiClient(api_key)
+        
+    logger.info("[get_gemini_client] Using standard Google GenAI SDK client.")
     return genai.Client(
         http_options=types.HttpOptions(
             timeout=10000,

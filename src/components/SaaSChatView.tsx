@@ -51,6 +51,7 @@ interface UIMessage {
   timestamp: string;
   sentiment?: SentimentResult;
   rag_sources?: string[];
+  model_used?: string;
 }
 
 export default function SaaSChatView({
@@ -121,13 +122,15 @@ export default function SaaSChatView({
           id: "msg_init_1",
           sender: "ai-agent",
           text: `👋 Hello ${activeCustomer.name}! How can we help you?`,
-          timestamp: timeStr
+          timestamp: timeStr,
+          model_used: "System Welcome"
         },
         {
           id: "msg_init_2",
           sender: "ai-agent",
           text: `I can help manage your ${activeCustomer.plan} Plan locker space. You can trigger billing refunds, edit emails, or cancel subscription renewals right here securely!`,
-          timestamp: timeStr
+          timestamp: timeStr,
+          model_used: "System Welcome"
         }
       ]);
       // Fetch initial risk/timeline from backend if running
@@ -138,13 +141,15 @@ export default function SaaSChatView({
           id: "msg_init_1",
           sender: "ai-agent",
           text: `👋 Hello Guest! Welcome to CloudBox. How can we help you?`,
-          timestamp: timeStr
+          timestamp: timeStr,
+          model_used: "System Welcome"
         },
         {
           id: "msg_init_2",
           sender: "ai-agent",
           text: `I am Cloudbot, your virtual assistant. Feel free to explore our premium secure storage system, browse plans, or ask me questions!`,
-          timestamp: timeStr
+          timestamp: timeStr,
+          model_used: "System Welcome"
         }
       ]);
     }
@@ -178,7 +183,13 @@ export default function SaaSChatView({
   };
 
   // Bot response dispatcher
-  const triggerBotReply = (textReply: string, delayMs = 1000, sentiment?: SentimentResult, ragSources?: string[]) => {
+  const triggerBotReply = (
+    textReply: string,
+    delayMs = 1000,
+    sentiment?: SentimentResult,
+    ragSources?: string[],
+    modelUsed?: string
+  ) => {
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
@@ -190,7 +201,8 @@ export default function SaaSChatView({
           text: textReply,
           timestamp: getTimestamp(),
           sentiment,
-          rag_sources: ragSources
+          rag_sources: ragSources,
+          model_used: modelUsed || "Local Heuristic Fallback"
         }
       ]);
     }, delayMs);
@@ -254,7 +266,7 @@ export default function SaaSChatView({
       ]);
 
       // Append bot response
-      triggerBotReply(data.reply, 100, data.sentiment, data.rag_sources);
+      triggerBotReply(data.reply, 100, data.sentiment, data.rag_sources, data.model_used);
 
       // Update states
       if (data.risk_score) setRiskScore(data.risk_score);
@@ -381,7 +393,7 @@ export default function SaaSChatView({
       }
 
       // Normal bot reply animation
-      triggerBotReply(reply, 100, data.sentiment, data.rag_sources);
+      triggerBotReply(reply, 100, data.sentiment, data.rag_sources, data.model_used);
 
     } catch (err) {
       console.warn("Backend error, falling back to local chat logic:", err);
@@ -656,6 +668,26 @@ export default function SaaSChatView({
                               >
                                 {m.sentiment.level === "positive" ? "😊 Positive Agent Mood" :
                                  m.sentiment.level === "negative" ? "⚠️ Frustrated Customer Alert" : "😐 Neutral"}
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Model Used Badge */}
+                          {isBot && m.model_used && (
+                            <div className="mt-1.5 flex justify-start">
+                              <span 
+                                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-extrabold border uppercase tracking-wider ${
+                                  m.model_used.includes("Gemini")
+                                    ? "bg-indigo-50 text-indigo-700 border-indigo-250 shadow-indigo-50"
+                                    : m.model_used.includes("Rule Engine")
+                                    ? "bg-sky-50 text-sky-700 border-sky-200"
+                                    : m.model_used.includes("Welcome")
+                                    ? "bg-slate-50 text-slate-600 border-slate-200"
+                                    : "bg-amber-50 text-amber-700 border-amber-250"
+                                }`}
+                              >
+                                <Sparkles className={`h-2.5 w-2.5 ${m.model_used.includes("Gemini") ? "text-indigo-500 animate-pulse" : "text-slate-400"}`} />
+                                <span>Source: {m.model_used}</span>
                               </span>
                             </div>
                           )}

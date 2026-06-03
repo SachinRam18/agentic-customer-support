@@ -44,9 +44,9 @@ class ConversationMemory:
             
         return self.sessions[session_id]
 
-    def add_message(self, session_id: str, role: str, content: str) -> ChatMessage:
+    def add_message(self, session_id: str, role: str, content: str, model_used: Optional[str] = None) -> ChatMessage:
         session = self.get_or_create_session(session_id)
-        msg = ChatMessage(role=role, content=content)
+        msg = ChatMessage(role=role, content=content, model_used=model_used)
         session.messages.append(msg)
         return msg
 

@@ -316,8 +316,19 @@ export default function HumanAgentDashboardView({ tickets, onAddTicketMessage }:
                                 }`}>
                                   <p className="whitespace-pre-line font-medium">{m.content}</p>
                                   {m.sentiment && (
-                                    <span className="mt-1 px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase bg-slate-50 text-slate-500 border border-slate-200 inline-block">
+                                    <span className="mt-1 mr-1.5 px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase bg-slate-50 text-slate-500 border border-slate-200 inline-block">
                                       Sentiment: {m.sentiment.level}
+                                    </span>
+                                  )}
+                                  {isBot && m.model_used && (
+                                    <span className={`mt-1 px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase border inline-block ${
+                                      m.model_used.includes("Gemini")
+                                        ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                                        : m.model_used.includes("Rule Engine")
+                                        ? "bg-sky-50 text-sky-700 border-sky-200"
+                                        : "bg-amber-50 text-amber-750 border-amber-250"
+                                    }`}>
+                                      Source: {m.model_used}
                                     </span>
                                   )}
                                 </div>

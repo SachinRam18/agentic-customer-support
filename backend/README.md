@@ -21,9 +21,9 @@ Agentic Customer Support Backend built with FastAPI and Groq LLM.
 2. Set your API key in `.env`:
 GROQ_API_KEY=your_groq_key_here
 
-3. Run the server:
+3. Run the server from the **root directory**:
 ```bash
-   uvicorn main:app --reload
+   python -m uvicorn backend.main:app --reload
 ```
 
 4. Open API docs:

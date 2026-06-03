@@ -26,6 +26,9 @@ from backend.risk import calculate_risk_score
 from backend.security import security_guard
 from backend.notifications import notification_service
 from backend.rag import policy_rag
+import logging
+
+logger = logging.getLogger("uvicorn.error")
 
 class IntentAgent:
     """
@@ -43,7 +46,8 @@ class IntentAgent:
             intent = classify_intent(message)
             reasoning = f"Gemini classified intent as: {intent} based on semantic mapping."
         except Exception as e:
-            print(f"Gemini intent classification failed: {e}. Falling back to local rules.")
+            logger.error(f"Gemini intent classification failed: {e}. Falling back to local rules.", exc_info=True)
+            print(f"Gemini intent classification failed: {e}. Falling back to local rules.", flush=True)
             intent = classify_intent_local_fallback(message)
             reasoning = f"Local heuristic fallback matched keywords to intent: {intent}"
             
@@ -124,7 +128,8 @@ Generate a helpful support reply. Do not mention system details, RAG, or interna
             reply = response.text.strip()
             reasoning = "Generated response using Gemini with relevant RAG context and conversation history."
         except Exception as e:
-            print(f"Gemini reply generation failed: {e}. Falling back to local template.")
+            logger.error(f"Gemini reply generation failed: {e}. Falling back to local template.", exc_info=True)
+            print(f"Gemini reply generation failed: {e}. Falling back to local template.", flush=True)
             reply = generate_reply_local_fallback(intent, message)
             reasoning = f"Generated template response using local heuristics for intent: {intent}"
             
@@ -300,6 +305,7 @@ class AgentOrchestrator:
         reply = ""
         agent_reasoning = intent_reasoning
         notifications_sent = []
+        model_used = "System Rule Engine"
         
         # Check if user is responding to a confirmation prompt
         cleaned_msg = message.strip().lower()
@@ -420,7 +426,7 @@ class AgentOrchestrator:
             update_node("audit", "completed")
             
             # Save assistant response to memory
-            memory_store.add_message(session_id, "assistant", reply)
+            memory_store.add_message(session_id, "assistant", reply, model_used=model_used)
             
             return ChatResponse(
                 reply=reply,
@@ -432,7 +438,8 @@ class AgentOrchestrator:
                 pending_confirmation=None,
                 notifications_sent=notifications_sent,
                 rag_sources=rag_sources,
-                agent_reasoning=f"Processed confirmation input. User confirmed={is_confirm}"
+                agent_reasoning=f"Processed confirmation input. User confirmed={is_confirm}",
+                model_used=model_used
             )
 
         # ─────────────────────────────────────────────────────────────
@@ -464,7 +471,7 @@ class AgentOrchestrator:
             update_node("audit", "active")
             update_node("audit", "completed")
             
-            memory_store.add_message(session_id, "assistant", reply)
+            memory_store.add_message(session_id, "assistant", reply, model_used=model_used)
             
             return ChatResponse(
                 reply=reply,
@@ -476,7 +483,8 @@ class AgentOrchestrator:
                 pending_confirmation=pending,
                 notifications_sent=[],
                 rag_sources=rag_sources,
-                agent_reasoning=f"Destructive action detected. Created pending confirmation for {action_type}."
+                agent_reasoning=f"Destructive action detected. Created pending confirmation for {action_type}.",
+                model_used=model_used
             )
 
         # Check for auto-escalation or explicit escalation
@@ -515,11 +523,15 @@ class AgentOrchestrator:
             )
             agent_reasoning += " | " + support_reasoning
             update_node("support", "completed")
+            if "Gemini" in support_reasoning:
+                model_used = "Gemini 2.5 Flash"
+            else:
+                model_used = "Local Fallback Template"
 
         update_node("orchestrator", "completed")
         
         # Save assistant reply to memory
-        memory_store.add_message(session_id, "assistant", reply)
+        memory_store.add_message(session_id, "assistant", reply, model_used=model_used)
 
         # Node: Audit logging
         update_node("audit", "active")
@@ -544,5 +556,6 @@ class AgentOrchestrator:
             pending_confirmation=session.pending_action,
             notifications_sent=notifications_sent,
             rag_sources=rag_sources,
-            agent_reasoning=agent_reasoning
+            agent_reasoning=agent_reasoning,
+            model_used=model_used
         )
