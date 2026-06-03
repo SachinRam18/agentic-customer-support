@@ -136,9 +136,7 @@ def classify_intent_local_fallback(message: str) -> str:
                                "get my money", "return my money", "credit back"]):
         return "trigger_refund"
 
-    if any(k in msg for k in ["update email", "change email", "modify email", "new email", "change address",
-                               "update address", "switch email", "update my mail", "change my mail",
-                               "edit email", "billing email", "notification email"]):
+    if any(k in msg for k in ["update email", "change email", "modify email", "new email", "change my email", "edit email"]):
         return "update_email"
 
     if any(k in msg for k in ["ticket", "escalat", "human", "representative", "agent", "support person",
@@ -146,6 +144,34 @@ def classify_intent_local_fallback(message: str) -> str:
                                "customer service", "speak to", "talk to a", "connect me", "transfer me",
                                "supervisor", "manager", "senior agent", "complaint department"]):
         return "escalate_ticket"
+
+    # ── New specific action mappings ──
+    if any(k in msg for k in ["order status", "track order", "where is my order", "shipping status", "track package", "tracking status", "order info"]):
+        return "check_order_status"
+
+    if any(k in msg for k in ["resend invoice", "send receipt", "invoice copy", "get invoice", "receipt copy", "email invoice", "copy of receipt"]):
+        return "resend_invoice"
+
+    if any(k in msg for k in ["billing address", "update address", "change address", "billing location", "billing details"]):
+        return "update_billing_address"
+
+    if any(k in msg for k in ["reset password", "forgot password", "change password", "reset pass", "lost password"]):
+        return "reset_account_password"
+
+    if any(k in msg for k in ["storage quota", "quota space", "check storage", "space limit", "how much storage", "storage capacity"]):
+        return "check_storage_quota"
+
+    if any(k in msg for k in ["billing history", "payment history", "past payments", "transaction history", "recent bills", "payment list"]):
+        return "check_billing_history"
+
+    if any(k in msg for k in ["update card", "change card", "payment method", "update payment", "payment info"]):
+        return "update_payment_method"
+
+    if any(k in msg for k in ["enable mfa", "enable 2fa", "set up 2fa", "setup mfa", "two factor", "turn on mfa"]):
+        return "enable_mfa"
+
+    if any(k in msg for k in ["data export", "download data", "export files", "gdpr export", "backup data", "download my files"]):
+        return "request_data_export"
 
     # ── Upgrade / Downgrade ──
     if any(k in msg for k in ["upgrade", "higher plan", "bigger plan", "more storage", "switch to professional",
@@ -307,6 +333,68 @@ def classify_intent_local_fallback(message: str) -> str:
 # ─────────────────────────────────────────────────────────────
 def generate_reply_local_fallback(intent: str, message: str) -> str:
     msg = message.lower()
+
+    # ── New Action Fallback Replies ──
+    if intent == "check_order_status":
+        return ("📦 **Order Tracking Details:**\n\n"
+                "• **Order ID:** ORD1002\n"
+                "• **Status:** Shipped (In Transit)\n"
+                "• **Carrier:** FedEx Priority\n"
+                "• **Estimated Delivery:** 2 business days\n"
+                "• **Tracking Number:** FDX-99210-CBX\n\n"
+                "You can view tracking milestones in your dashboard shipping panel.")
+
+    if intent == "resend_invoice":
+        return ("📄 **Invoice Request Received:**\n\n"
+                "I have located your most recent invoice for billing cycle (ORD1002 - Starter Tier, $199.00).\n"
+                "• **Action taken:** Re-sent secure PDF receipt to your registered email address.\n"
+                "• **Status:** Dispatched successfully.\n\n"
+                "Please check your inbox or spam folder in a few minutes.")
+
+    if intent == "update_billing_address":
+        return ("🏠 **Billing Address Management:**\n\n"
+                "I can help update your card or corporate billing address.\n"
+                "Please type your new billing details format (Street, City, State, ZIP) in the chat to proceed, or click 'cancel' to exit.")
+
+    if intent == "reset_account_password":
+        return ("🔑 **Security: Password Reset:**\n\n"
+                "You are requesting to reset your account password. This is a security-sensitive action.\n"
+                "I am initiating this flow. Please reply **YES** to confirm or **NO** to cancel.")
+
+    if intent == "check_storage_quota":
+        return ("📂 **Storage & Space Utilization:**\n\n"
+                "• **Allocated Quota:** 100 GB (Starter Plan)\n"
+                "• **Used Space:** 42.8 GB (42.8% capacity)\n"
+                "• **Available Space:** 57.2 GB\n\n"
+                "You have plenty of storage remaining! You can manage files inside your Locker Dashboard.")
+
+    if intent == "check_billing_history":
+        return ("💳 **Billing History Summary:**\n\n"
+                "Here are your 3 most recent transaction records:\n"
+                "1. **ORD1002** (Jun 1, 2026) - $199.00 - **Paid**\n"
+                "2. **ORD0981** (May 1, 2026) - $199.00 - **Paid**\n"
+                "3. **ORD0964** (Apr 1, 2026) - $199.00 - **Paid**\n\n"
+                "You can view and download itemized PDF receipts directly under the dashboard invoice hub.")
+
+    if intent == "update_payment_method":
+        return ("💳 **Payment Method Update:**\n\n"
+                "To securely update your credit/debit card details or register a new UPI address:\n"
+                "1. Head to your **Billing Dashboard**.\n"
+                "2. Click on **'Payment Methods'**.\n"
+                "3. Select **'Add New Method'** and input details securely.\n\n"
+                "This portal conforms to PCI-DSS encryption standards.")
+
+    if intent == "enable_mfa":
+        return ("🛡️ **Security: Enable Multi-Factor Authentication (MFA):**\n\n"
+                "Securing your vault with 2FA/MFA is highly recommended.\n"
+                "I can trigger the MFA setup wizard. Please reply **YES** to confirm or **NO** to cancel.")
+
+    if intent == "request_data_export":
+        return ("📥 **GDPR / Data Privacy Export:**\n\n"
+                "Your data privacy is our priority. I will assemble a full package containing all your files, shared vault links, and audit history.\n"
+                "• **Processing time:** Compilation takes 5-10 minutes.\n"
+                "• **Delivery:** A secure download link will be dispatched to your email address once ready.\n\n"
+                "Shall I begin packing and compiling your data export package?")
 
     # ── Greetings ──
     if intent == "greeting":
@@ -960,18 +1048,38 @@ def classify_intent(message: str) -> str:
     prompt = f"""Classify this support chat message into exactly one of these categories:
 - cancel_subscription
 - trigger_refund
+- account_deletion
+- check_order_status
+- resend_invoice
+- update_billing_address
+- reset_account_password
+- check_storage_quota
+- upgrade_downgrade
 - update_email
 - escalate_ticket
-- information_query
+- check_billing_history
+- update_payment_method
+- enable_mfa
+- request_data_export
 - complaint
 - ambiguous
 
 Definitions:
 - cancel_subscription: user wants to cancel, terminate, or unsubscribe from their plan.
 - trigger_refund: user wants a refund, credit, or dispute a charge.
+- account_deletion: user wants to permanently delete or remove their account.
+- check_order_status: user wants to track shipping, check delivery status, or track an order.
+- resend_invoice: user wants to get a copy of their invoice, receipt, or bill.
+- update_billing_address: user wants to update their home, office, or card billing address.
+- reset_account_password: user wants to change, reset, or recover their password.
+- check_storage_quota: user wants to know their space usage or how much storage they have.
+- upgrade_downgrade: user wants to change plans, move to pro, or get a cheaper plan.
 - update_email: user wants to update, change, or modify their account email address.
 - escalate_ticket: user wants to talk to a human, open a support ticket, or escalate the case.
-- information_query: user is asking a general question about features, pricing, FAQ, storage, security, etc.
+- check_billing_history: user wants to see their transaction lists, payment history, or past bills.
+- update_payment_method: user wants to change card, add new credit card, or update payment info.
+- enable_mfa: user wants to enable two-factor authentication, 2FA, MFA, or security authenticator.
+- request_data_export: user wants a backup or copy of all their stored files/data.
 - complaint: user is expressing frustration, anger, or complaints about the service.
 - ambiguous: none of the above or unclear.
 

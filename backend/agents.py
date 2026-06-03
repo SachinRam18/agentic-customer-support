@@ -357,6 +357,26 @@ class AgentOrchestrator:
                     elif action == ConfirmableAction.ACCOUNT_DELETION:
                         # Perform account deletion mock
                         result_msg = "account deleted and data purge scheduled"
+                    elif action == ConfirmableAction.RESET_ACCOUNT_PASSWORD:
+                        result_msg = "password reset request confirmed, link emailed"
+                        email = cust_context.email or "customer@example.com"
+                        notif = notification_service.send_email(
+                            email,
+                            "Reset Your Password",
+                            f"Hi {cust_context.name or 'Customer'},\n\nWe received a request to reset your password. Click this link to reset it: https://cloudbox.com/auth/reset?token=tkn_8124\n\nThanks,\nCloudBox Security",
+                            customer_id
+                        )
+                        notifications_sent.append(notif)
+                    elif action == ConfirmableAction.ENABLE_MFA:
+                        result_msg = "MFA configuration wizard triggered"
+                        email = cust_context.email or "customer@example.com"
+                        notif = notification_service.send_email(
+                            email,
+                            "Enable Two-Factor Authentication (MFA)",
+                            f"Hi {cust_context.name or 'Customer'},\n\nTo complete MFA setup, scan this code inside Google Authenticator: QR_CODE_MOCK_1829\n\nThanks,\nCloudBox Security",
+                            customer_id
+                        )
+                        notifications_sent.append(notif)
                         
                     # Log notifications
                     for notif in notifications_sent:
@@ -399,6 +419,10 @@ class AgentOrchestrator:
                         reply += "The refund will be credited back to your original payment method in 5-7 business days."
                     elif action == ConfirmableAction.ACCOUNT_DELETION:
                         reply += "We will purge all your storage volumes in 30 days under the Right to be Forgotten guidelines."
+                    elif action == ConfirmableAction.RESET_ACCOUNT_PASSWORD:
+                        reply += "A password reset link has been dispatched to your email address."
+                    elif action == ConfirmableAction.ENABLE_MFA:
+                        reply += "The multi-factor configuration scanner has been sent to your email."
                 
                 update_node("tool_execution", "completed")
             else:
@@ -446,6 +470,118 @@ class AgentOrchestrator:
         # Process regular intents
         # ─────────────────────────────────────────────────────────────
         
+        # Check for direct, non-confirmable actions that should execute immediately
+        direct_actions = {
+            "check_order_status",
+            "resend_invoice",
+            "update_billing_address",
+            "check_storage_quota",
+            "check_billing_history",
+            "update_payment_method",
+            "request_data_export"
+        }
+        
+        if intent in direct_actions:
+            update_node("tool_execution", "active")
+            result_msg = ""
+            email = cust_context.email or "customer@example.com"
+            
+            if intent == "check_order_status":
+                result_msg = "Order ORD1002 is Shipped and in transit via FedEx"
+                reply = ("📦 **Order Status Checked:**\n\n"
+                         "• **Order ID:** ORD1002\n"
+                         "• **Status:** Shipped (In Transit)\n"
+                         "• **Carrier:** FedEx Priority\n"
+                         "• **Estimated Delivery:** 2 business days\n"
+                         "• **Tracking Number:** FDX-99210-CBX")
+            elif intent == "resend_invoice":
+                result_msg = f"invoice ORD1002 re-sent to {email}"
+                notif = notification_service.send_email(
+                    email, 
+                    "Invoice Copy - ORD1002", 
+                    f"Hi {cust_context.name or 'Customer'},\n\nHere is your requested copy of invoice ORD1002 (Starter Plan, $199.00).\n\nThanks,\nCloudBox Billing Team",
+                    customer_id
+                )
+                notifications_sent.append(notif)
+                reply = "📄 I have successfully re-sent a PDF copy of your last invoice (ORD1002) to your email address."
+            elif intent == "update_billing_address":
+                result_msg = "billing address updated to: 123 CloudBox Way"
+                reply = "🏠 I have updated your account billing address to: *123 CloudBox Way, Tech City, 90210*."
+            elif intent == "check_storage_quota":
+                result_msg = "storage quota evaluated: 42.8 GB / 100 GB used"
+                reply = ("📂 **Storage Space Evaluated:**\n\n"
+                         "• **Plan Tier:** Starter Plan (100 GB)\n"
+                         "• **Used Space:** 42.8 GB\n"
+                         "• **Free Space:** 57.2 GB\n\n"
+                         "You are currently using 42.8% of your quota.")
+            elif intent == "check_billing_history":
+                result_msg = "billing transactions history retrieved"
+                reply = ("💳 **Recent Invoices & Transactions:**\n\n"
+                         "1. **ORD1002** (Jun 1, 2026) - $199.00 - **Paid**\n"
+                         "2. **ORD0981** (May 1, 2026) - $199.00 - **Paid**\n"
+                         "3. **ORD0964** (Apr 1, 2026) - $199.00 - **Paid**")
+            elif intent == "update_payment_method":
+                result_msg = "payment method change portal initialized"
+                reply = "💳 I have initialized the secure payment update portal. Please visit the **Payment Methods** page in your Settings dashboard to enter your card details safely."
+            elif intent == "request_data_export":
+                result_msg = "GDPR data export compilation initiated"
+                notif = notification_service.send_email(
+                    email,
+                    "Your CloudBox Data Export is Ready",
+                    f"Hi {cust_context.name or 'Customer'},\n\nYour GDPR data export request is compiled. You can download the zip archive at this secure link: https://cloudbox.com/download/export/usr_98124\n\nThanks,\nCloudBox Privacy Team",
+                    customer_id
+                )
+                notifications_sent.append(notif)
+                reply = "📥 I have initiated your data export archive. A secure download link has been emailed to you."
+
+            # Log timeline event
+            memory_store.add_timeline_event(
+                session_id,
+                TimelineEventType.TOOL_CALLED,
+                f"Executed direct action '{intent}'",
+                {"result": result_msg}
+            )
+            
+            # Log audit
+            self.audit_agent.process(
+                customer_id=customer_id,
+                action=intent,
+                params={},
+                result="success",
+                reasoning=f"Direct action executed instantly without confirmation.",
+                session_id=session_id
+            )
+            
+            # Log notifications on timeline
+            for notif in notifications_sent:
+                memory_store.add_timeline_event(
+                    session_id,
+                    TimelineEventType.NOTIFICATION_SENT,
+                    f"Sent {notif.type.value} notification to customer",
+                    {"recipient": notif.recipient, "notif_id": notif.id}
+                )
+                
+            update_node("tool_execution", "completed")
+            update_node("orchestrator", "completed")
+            update_node("audit", "active")
+            update_node("audit", "completed")
+            
+            memory_store.add_message(session_id, "assistant", reply, model_used="System Rule Engine")
+            
+            return ChatResponse(
+                reply=reply,
+                intent=intent,
+                message=message,
+                sentiment=sentiment_res,
+                risk_score=risk_score,
+                timeline_events=session.timeline,
+                pending_confirmation=None,
+                notifications_sent=notifications_sent,
+                rag_sources=rag_sources,
+                agent_reasoning=f"Direct action executed: {intent}",
+                model_used="System Rule Engine"
+            )
+
         # Check if the intent requires confirmation (destructive actions)
         if security_guard.require_confirmation(intent):
             update_node("confirmation", "active")
@@ -459,8 +595,12 @@ class AgentOrchestrator:
                 params = {"plan": cust_context.plan or "Starter"}
             elif action_type == ConfirmableAction.ACCOUNT_DELETION:
                 params = {"email": cust_context.email or ""}
+            elif action_type == ConfirmableAction.RESET_ACCOUNT_PASSWORD:
+                params = {"email": cust_context.email or ""}
+            elif action_type == ConfirmableAction.ENABLE_MFA:
+                params = {"email": cust_context.email or ""}
                 
-            message_preview = f"You are requesting to {intent.replace('_', ' ')}. This action is destructive/billing-critical."
+            message_preview = f"You are requesting to {intent.replace('_', ' ')}. This action is destructive/security-critical."
             
             pending = memory_store.set_pending_action(session_id, action_type, params, message_preview)
             
@@ -483,7 +623,7 @@ class AgentOrchestrator:
                 pending_confirmation=pending,
                 notifications_sent=[],
                 rag_sources=rag_sources,
-                agent_reasoning=f"Destructive action detected. Created pending confirmation for {action_type}.",
+                agent_reasoning=f"High-risk action detected. Created pending confirmation for {action_type}.",
                 model_used=model_used
             )
 

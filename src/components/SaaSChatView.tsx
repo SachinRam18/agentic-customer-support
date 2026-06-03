@@ -77,6 +77,7 @@ export default function SaaSChatView({
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const [pendingConfirmation, setPendingConfirmation] = useState<PendingConfirmation | null>(null);
   const [showTimelinePanel, setShowTimelinePanel] = useState(false);
+  const [showPills, setShowPills] = useState(true);
   const [toasts, setToasts] = useState<{ id: string; message: string; type: "success" | "info" }[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -306,7 +307,10 @@ export default function SaaSChatView({
     
     // If waiting for an email address update input (Customers only)
     if (activeCustomer && activeIntent === "modify_email") {
-      if (query.includes("@")) {
+      if (query.trim() === "cancel") {
+        setActiveIntent(null);
+        triggerBotReply("Okay, I have cancelled the email update request.");
+      } else if (query.includes("@")) {
         onUpdateCustomerEmail(activeCustomer.id, text);
         setActiveIntent(null);
         triggerBotReply(`Success! I have securely synchronized your primary security email address to: "${text}". All systems are synced.`);
@@ -502,10 +506,19 @@ export default function SaaSChatView({
 
   const customerPills = [
     { label: "🚫 Cancel Plan", query: "Cancel my subscription" },
-    { label: "₹ Refund Charges", query: "Refund my double billing charges" },
+    { label: "💸 Refund Charges", query: "Refund my last order charges" },
     { label: "✉️ Update Email", query: "Update account email address" },
     { label: "⚠️ Escalate Case", query: "Escalate support ticket" },
-    { label: "📂 My Storage", query: "How much storage do I have?" }
+    { label: "📂 Storage Quota", query: "Check my storage quota capacity" },
+    { label: "📦 Order Status", query: "Track my order shipping status" },
+    { label: "📄 Get Invoice", query: "Resend my invoice copy" },
+    { label: "🏠 Change Address", query: "Update my billing address details" },
+    { label: "🔑 Reset Password", query: "Reset account password" },
+    { label: "💳 Bill History", query: "Check billing history and past payments" },
+    { label: "🎴 Update Card", query: "Update payment method" },
+    { label: "🛡️ Enable MFA", query: "Enable MFA security" },
+    { label: "📥 Export Data", query: "Request GDPR data export package" },
+    { label: "🗑️ Delete Account", query: "Delete my account permanently" }
   ];
 
   const activePills = activeCustomer ? customerPills : guestPills;
@@ -769,35 +782,37 @@ export default function SaaSChatView({
               </div>
 
               {/* Quick-action capsule pills element - wrapper inside bottom */}
-              <div className="bg-white px-4.5 py-3 border-t border-slate-100 space-y-2">
-                <span className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400 block px-1">
-                  Select a quick action
-                </span>
-                <div className="flex flex-wrap items-center gap-1.5 justify-start">
-                  {activePills.map((pill, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handlePillClick(pill.label, pill.query)}
-                      className="rounded-full bg-slate-50 border border-slate-200 hover:border-slate-400 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-all cursor-pointer select-none active:scale-95"
-                    >
-                      {pill.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Clear history toggle */}
-                {messages.length > 2 && (
-                  <div className="flex justify-center pt-2">
-                    <button 
-                      onClick={resetChat}
-                      className="text-[10px] font-bold text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-150 rounded-full px-3 py-1 transition-all cursor-pointer flex items-center gap-1 active:scale-95"
-                    >
-                      <span>Start clean conversation?</span>
-                      <span className="font-extrabold uppercase text-rose-600 bg-white border border-rose-200 px-1 rounded">Yes</span>
-                    </button>
+              {!isTyping && showPills && (
+                <div className="bg-white px-4.5 py-3 border-t border-slate-100 space-y-2 animate-fade-in">
+                  <span className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400 block px-1">
+                    Select a quick action
+                  </span>
+                  <div className="flex flex-wrap items-center gap-1.5 justify-start max-h-[140px] overflow-y-auto pr-1">
+                    {activePills.map((pill, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handlePillClick(pill.label, pill.query)}
+                        className="rounded-full bg-slate-50 border border-slate-200 hover:border-slate-400 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-all cursor-pointer select-none active:scale-95"
+                      >
+                        {pill.label}
+                      </button>
+                    ))}
                   </div>
-                )}
-              </div>
+
+                  {/* Clear history toggle */}
+                  {messages.length > 2 && (
+                    <div className="flex justify-center pt-2">
+                      <button 
+                        onClick={resetChat}
+                        className="text-[10px] font-bold text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-150 rounded-full px-3 py-1 transition-all cursor-pointer flex items-center gap-1 active:scale-95"
+                      >
+                        <span>Start clean conversation?</span>
+                        <span className="font-extrabold uppercase text-rose-600 bg-white border border-rose-200 px-1 rounded">Yes</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Footer input form */}
               <div className="p-3 border-t-2 border-slate-100 bg-white flex flex-col space-y-1">
@@ -826,11 +841,13 @@ export default function SaaSChatView({
                   >
                     <Send className="h-3.5 w-3.5 fill-white" />
                   </button>
-                  <button
+                   <button
                     type="button"
-                    onClick={() => triggerBotReply("SaaS automated options panel is simulated! Choose the capsules above for instant modifications. 📑")}
-                    className="h-9 w-9 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full flex items-center justify-center shrink-0 transition-colors cursor-pointer active:scale-95"
-                    title="SaaS Options"
+                    onClick={() => setShowPills(!showPills)}
+                    className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 transition-all cursor-pointer active:scale-95 ${
+                      showPills ? "bg-blue-50 text-blue-600 border border-blue-200" : "bg-slate-100 hover:bg-slate-200 text-slate-600"
+                    }`}
+                    title="Toggle Quick Actions Panel"
                   >
                     <Menu className="h-4 w-4 stroke-[2.5]" />
                   </button>

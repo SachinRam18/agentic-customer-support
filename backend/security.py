@@ -17,11 +17,14 @@ class SecurityGuard:
         """
         Check if an action is destructive and requires explicit client confirmation.
         """
-        try:
-            ConfirmableAction(action_type)
-            return True
-        except ValueError:
-            return False
+        high_risk_actions = {
+            ConfirmableAction.CANCEL_SUBSCRIPTION.value,
+            ConfirmableAction.TRIGGER_REFUND.value,
+            ConfirmableAction.ACCOUNT_DELETION.value,
+            ConfirmableAction.RESET_ACCOUNT_PASSWORD.value,
+            ConfirmableAction.ENABLE_MFA.value
+        }
+        return action_type in high_risk_actions
 
     def check_refund_abuse(self, customer_id: str) -> bool:
         """

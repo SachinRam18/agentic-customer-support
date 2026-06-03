@@ -45,6 +45,18 @@ class ConfirmableAction(str, Enum):
     CANCEL_SUBSCRIPTION = "cancel_subscription"
     TRIGGER_REFUND = "trigger_refund"
     ACCOUNT_DELETION = "account_deletion"
+    CHECK_ORDER_STATUS = "check_order_status"
+    RESEND_INVOICE = "resend_invoice"
+    UPDATE_BILLING_ADDRESS = "update_billing_address"
+    RESET_ACCOUNT_PASSWORD = "reset_account_password"
+    CHECK_STORAGE_QUOTA = "check_storage_quota"
+    UPGRADE_DOWNGRADE = "upgrade_downgrade"
+    UPDATE_EMAIL = "update_email"
+    ESCALATE_TICKET = "escalate_ticket"
+    CHECK_BILLING_HISTORY = "check_billing_history"
+    UPDATE_PAYMENT_METHOD = "update_payment_method"
+    ENABLE_MFA = "enable_mfa"
+    REQUEST_DATA_EXPORT = "request_data_export"
 
 
 # ─────────────────────────────────────────────────────────────
