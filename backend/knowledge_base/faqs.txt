@@ -1,0 +1,120 @@
+CloudBox Customer Support — Frequently Asked Questions (FAQs)
+=============================================================
+
+CATEGORY: Subscription
+Q: How do I cancel my subscription?
+A: Customers can cancel subscriptions anytime from account settings. After canceling, you will continue to have access to your space and all full premium features until the end of your current billing period.
+
+---
+
+CATEGORY: Refunds
+Q: What is the refund policy?
+A: Refund requests are accepted within 7 days of purchase. Only first-time purchases of any plan are eligible for a refund. Auto-renewals and team plan add-ons are strictly non-refundable.
+
+---
+
+CATEGORY: Billing
+Q: How do I update my billing email?
+A: Users can update their billing email through the accounts profile section under 'Billing Information'. This redirects all invoices, payment alerts, and dynamic receipts to the designated address.
+
+---
+
+CATEGORY: Technical Issues / Support Contact
+Q: How can I contact support?
+A: You can contact support through email (support@cloudbox.com), our live AI web helper, or submit a support ticket in our interactive Support Portal. Priority support is provided to Professional and Enterprise customers.
+
+---
+
+CATEGORY: Refunds
+Q: How long does refund processing take?
+A: Refunds are processed within 5-7 business days using the original payment channel. Bank clearing processes might add an additional 2-3 business days depending on your financial institution.
+
+---
+
+CATEGORY: Subscription
+Q: Is there a cancellation or termination fee?
+A: No, there are no cancellation or termination fees on CloudBox. We support honest, user-first cloud storage with simple monthly and yearly scheduling. You cancel free of charge at any time.
+
+---
+
+CATEGORY: Subscription
+Q: Will I lose my files immediately after canceling?
+A: No. Your subscription remains fully active with existing quota benefits until the end of the current cycle. At the end of the cycle, your quota is stepped down, but we preserve your files intact for 30 consecutive days before archival purging.
+
+---
+
+CATEGORY: Billing
+Q: How can I toggle between monthly and yearly billing?
+A: Customers can toggle billing plans inside the Account portal. Switching to yearly offers a 20% flat discount on our plans, calculated dynamically and adjusted prorated on your current storage balance.
+
+---
+
+CATEGORY: Billing / Payment Methods
+Q: What payment methods does CloudBox accept?
+A: We support a wide array of payment methods, including all major Credit/Debit Cards (Visa, Mastercard, Amex), UPI (Google Pay, PhonePe), and secure Internet Net Banking.
+
+---
+
+CATEGORY: Billing / Payment Failure
+Q: What happens if a subscription payment fails?
+A: If auto-renewal fails, we grant a 14-day grace period. During this window, we make up to three retry attempts at days 3, 7, and 12. If payment is still overdue after 14 days, your account workspace shifts to a read-only suspended mode.
+
+---
+
+CATEGORY: Account Management / Password Reset
+Q: How do I reset my security password?
+A: If you forgot your password or want to reset it, visit our website login page, select 'Forgot Password', and enter your secure account email. A cryptographic verification token will be sent instantly.
+
+---
+
+CATEGORY: Account Management / Email Update
+Q: Can I update my login email address?
+A: Yes, you can update your primary login profile email by sending the request in the Profile Portal. To secure your account, a confirmation link is dispatched to both your old and new email addresses.
+
+---
+
+CATEGORY: Account Management / Security / MFA
+Q: Is multi-factor authentication (MFA) supported?
+A: Yes, CloudBox strongly supports MFA security. You can configure MFA using standard authenticator apps (like Google Authenticator or Microsoft Authenticator) in the Account Security Hub.
+
+---
+
+CATEGORY: Technical Issues / Security / Encryption
+Q: Are files encrypted in transit and at rest?
+A: Absolutely. All CloudBox data is encrypted in transit using TLS 1.3 tunnels and encrypted at rest on our secure cloud nodes using industry-leading AES-256 blocks with full customer-held keys.
+
+---
+
+CATEGORY: Technical Issues / Upload Limits
+Q: Is there a single-file size upload limit?
+A: File size limits are based on your subscription tier. Starter plan allows files up to 5 GB. Professional tier allows files up to 50 GB. Enterprise clients can upload single files up to 250 GB.
+
+---
+
+CATEGORY: Technical Issues / Version History
+Q: How do I review file version history?
+A: You can review version history by right-clicking any file inside the web interface or explorer app. We keep version histories for 30 days on Starter, 90 days on Professional, and 365 days on Enterprise plans.
+
+---
+
+CATEGORY: Billing / Invoices
+Q: Where can I download my previous tax invoices?
+A: Tax invoices are accessible under 'Invoices & Billing History' in the member dashboard. You can download PDF copies of all past payments instantly with clear breakdown summaries.
+
+---
+
+CATEGORY: Refunds / Taxes and Fees
+Q: Are taxes and gateway fees fully refundable?
+A: Under first-purchase cancellations approved within 7 days, the full base fee and standard taxes are fully refunded. Any international currency conversion or gateway transaction surcharges might be non-refundable.
+
+---
+
+CATEGORY: Technical Issues / Desktop App / Offline Sync
+Q: Is there an offline sync app for Windows and macOS?
+A: Yes, CloudBox offers dedicated native sync applications for Windows, macOS, and Linux. These apps mount a local path on your machine mapping directly to your secure cloud volume.
+
+---
+
+CATEGORY: Technical Issues / File Recovery / Trash
+Q: How do I restore a permanently deleted folder?
+A: Folders thrown into the cloud trash are preserved for 30 storage days. Within this period, you can click 'Restore' next to the folder inside Trash. After 30 days, folders are permanently purged.

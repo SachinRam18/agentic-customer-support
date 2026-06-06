@@ -1,0 +1,90 @@
+CloudBox Customer Support — Official Policies
+=============================================
+
+SECTION 1: Refund Policy
+Title: Terms of Cancellation and Financial Reclaim
+-------------------------------------------------
+
+Eligibility Threshold:
+Refund requests on subscription plans are accepted if submitted within exactly seven (7) solar days of the initial plan transaction timestamp. Renewals, periodic plans, and automatic billing rollovers are strictly excluded from refund eligibility.
+
+First-Time Purchase Proviso:
+Refund queries only apply to first-time customer purchases. Creating duplicate dummy accounts to exploit multiple refund cycles violates terms and triggers a lifetime account block. Only the first-time purchase of any plan tier is eligible.
+
+Refund Processing Timetable:
+Once approved by our team or our Agentic AI billing controller, refunds are cleared and processed within five (5) to seven (7) business days. Funding returns exclusively to the original payment mechanism used at the time of purchase.
+
+Fees Exclusions:
+Any currency conversion surcharges, international bank processing fees, or payment processing gateway surcharges are outside CloudBox's control and are non-refundable. Only the base subscription fee and standard applicable taxes are refunded.
+
+---
+
+SECTION 2: Subscription Policy
+Title: Account Plan Tiers and Termination Rights
+------------------------------------------------
+
+Anytime Termination:
+Users can cancel their subscription at any moment without penalty. CloudBox does not charge cancellation fees, early exit surcharges, or server teardown fees. Cancellation is always free of charge.
+
+Billing Period Duration:
+Upon active cancellation, client premium quotas (Starter, Professional, or Enterprise) remain fully operational until the end of the current active billing period. No credit adjustments or partial refunds are issued for remaining active days in the current billing cycle.
+
+Data Retention Window:
+After subscription period expiration, your storage reverts to the 10 GB free tier limit. If your active storage footprint exceeds this free threshold, we lock file upload permissions but safely buffer your file vaults for thirty (30) days as a safe margin. If no renewal occurs within 30 days, files are permanently pruned and cannot be recovered.
+
+Tier Adjustments (Upgrades and Downgrades):
+Mid-cycle plan upgrades are executed instantly and prorated based on your remaining billing days. Downgrades take effect at the next scheduled billing cycle timestamp. You retain current tier benefits until the end of the current cycle.
+
+---
+
+SECTION 3: Billing Policy
+Title: Invoicing, Auto-Renewals, and Grace Margins
+---------------------------------------------------
+
+Automated Cycle Renewal:
+Standard monthly and annual subscription plans automatically renew by default at the end of each billing period using stored customer payment credit profiles. Customers are notified before renewal via email.
+
+Grace Period and Overdue Retry:
+Upon renewal transaction failures, CloudBox assigns a system alert and implements a fourteen (14) day payment grace period. We attempt billing retries at days 3, 7, and 12 during this grace state. Full premium access is maintained during the grace window.
+
+Account Restriction Stage:
+If an overdue subscription remains unpaid after the 14-day grace threshold, write privileges are frozen instantly. Files remain visible and readable but no new files can be written or uploaded. The account shifts to full suspension status after 30 total delayed days.
+
+Billing Data Modification:
+Customers hold the right to modify their primary billing email, entity tax IDs, or card credentials in the Accounts dashboard at any time. Updated invoices are dispatched to the new billing address automatically.
+
+---
+
+SECTION 4: Privacy Policy
+Title: Storage Security, Access Auditing, and Data Rights
+----------------------------------------------------------
+
+Zero-Knowledge Infrastructure:
+CloudBox operates using client-side encryption with client-generated keys. We maintain absolutely no server-side access to customer encryption keys. Employees can never view, index, or access client storage directories or file contents.
+
+Authentication Integrity:
+Standard account logins require cryptographic password hashing. Sessions are generated with short-lived JWT access tokens. Customer login logs including IP address, device metadata, and country locations are saved for security monitoring purposes only.
+
+Third-Party Audits and GDPR:
+In compliance with standard data protection acts including GDPR, users can request complete data footprint archives at any time. Users can also register a 'Right to Be Forgotten' account deletion request via direct customer team ticket escalation. Requests are processed within 30 days as required by law.
+
+No Data Selling:
+CloudBox does not sell, exchange, rent, or lease customer storage telemetry, registration profiles, file statistics, or any personal data to third-party advertising networks or data brokers. Customer privacy is a core commitment.
+
+---
+
+SECTION 5: Account Management Policy
+Title: User Profile Control, Verification, and Lockout Procedures
+-----------------------------------------------------------------
+
+Email Address Modifications:
+Customers can update their active portal login email. Security guidelines dictate that validation confirmation requests are issued to both the retired old email address and the newly registered address as an anti-hijack precaution. Both addresses must confirm before the change takes effect.
+
+Password Cryptographic Retries and Lockout:
+After five (5) consecutive invalid login attempts, account login features are temporarily locked for thirty (30) minutes. Users can bypass this lock by initiating a password reset using their validated registered email address. This protects accounts from brute-force attacks.
+
+Account Ownership Disputes:
+In rare cases of corporate or team account ownership disputes, the cloud admin keys belong strictly to the billing controller cardholder registered under the primary billing profile. CloudBox support may require identity verification documentation to resolve disputes.
+
+Dormancy and Cleanup:
+Accounts with zero logins, zero API sync requests, and zero billing actions for twelve (12) consecutive months are classified as dormant and scheduled for safety cleanup. Prior alerts are sent 30 days, 15 days, and 3 days before any dormancy cleanup action is taken.

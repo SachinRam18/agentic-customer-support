@@ -1,0 +1,141 @@
+CloudBox Pricing Plans and Subscription Information
+====================================================
+
+OVERVIEW
+--------
+CloudBox offers three subscription tiers designed to fit individuals, small teams, and large enterprises. All plans include end-to-end AES-256 encryption, real-time sync across devices, and access to the web interface and native desktop/mobile apps.
+
+A free tier with 10 GB of storage is available with no credit card required.
+
+---
+
+PLAN: Starter
+Price: $199 per month | $159 per month billed annually ($1,908 per year — save 20%)
+Storage: 100 GB
+Single File Upload Limit: 5 GB
+Version History: 30 days
+Support SLA: 4 hours response time (business hours)
+Team Features: Basic sharing and collaboration
+Best For: Individual users and freelancers
+
+Starter Plan includes:
+- 100 GB of secure cloud storage
+- Up to 5 GB per single file upload
+- 30-day file version history
+- Standard email and chat support
+- Desktop apps for Windows, macOS, and Linux
+- Mobile apps for iOS and Android
+- Real-time sync across devices
+- File sharing with view-only or edit links
+- AES-256 client-side encryption
+- 30-day trash recovery window
+
+---
+
+PLAN: Professional
+Price: $499 per month | $399 per month billed annually ($4,788 per year — save 20%)
+Storage: 1 TB (1,000 GB)
+Single File Upload Limit: 50 GB
+Version History: 90 days
+Support SLA: 2 hours response time, available 24/7
+Team Features: Advanced collaboration and admin controls
+Best For: Small to medium teams and power users
+
+Professional Plan includes everything in Starter, plus:
+- 1 TB of secure cloud storage
+- Up to 50 GB per single file upload
+- 90-day file version history
+- Priority 24/7 support with 2-hour response SLA
+- Advanced team workspace controls
+- Password-protected and expiring share links
+- Activity logs and audit trail access
+- Admin dashboard for team management
+- @mention collaboration in file comments
+
+---
+
+PLAN: Enterprise
+Price: $999 per month | $799 per month billed annually ($9,588 per year — save 20%)
+Storage: Unlimited
+Single File Upload Limit: 250 GB
+Version History: 365 days (1 year)
+Support SLA: 30 minutes dedicated response, 24/7
+Team Features: Full enterprise controls, compliance, dedicated account manager
+Best For: Large organizations, regulated industries, enterprise security requirements
+
+Enterprise Plan includes everything in Professional, plus:
+- Unlimited cloud storage
+- Up to 250 GB per single file upload
+- 365-day (1 year) file version history
+- 30-minute SLA with dedicated enterprise support team
+- HIPAA-ready data handling
+- SOC 2 Type II compliance documentation
+- ISO 27001 certified infrastructure
+- GDPR data subject request handling
+- Custom invoice and tax ID configuration
+- Multi-team workspace management
+- Dedicated account manager
+- Custom API integrations
+- SSO (Single Sign-On) support
+
+---
+
+ANNUAL BILLING DISCOUNT
+------------------------
+All plans offer a 20% discount when billed annually:
+- Starter: $199/mo → $159/mo annually
+- Professional: $499/mo → $399/mo annually
+- Enterprise: $999/mo → $799/mo annually
+
+Switching to annual billing is prorated from your current monthly balance. The discount applies immediately on switch.
+
+---
+
+FREE TIER
+---------
+Storage: 10 GB
+Price: Free, no credit card required
+Limitations: No priority support, no version history beyond basic, basic file sharing only
+Note: After subscription cancellation, storage reverts to the 10 GB free tier.
+
+---
+
+PLAN COMPARISON TABLE
+----------------------
+
+Feature               | Starter       | Professional  | Enterprise
+---------------------|---------------|---------------|------------------
+Storage              | 100 GB        | 1 TB          | Unlimited
+File Upload Limit    | 5 GB          | 50 GB         | 250 GB
+Version History      | 30 days       | 90 days       | 365 days
+Support SLA          | 4 hours       | 2 hours (24/7)| 30 min (24/7)
+Team Features        | Basic         | Advanced      | Full Enterprise
+Compliance           | Standard      | Standard      | HIPAA, SOC2, ISO
+Price (Monthly)      | $199/mo       | $499/mo       | $999/mo
+Price (Annual)       | $159/mo       | $399/mo       | $799/mo
+
+---
+
+UPGRADE AND DOWNGRADE RULES
+-----------------------------
+- Upgrades take effect immediately and are prorated for the remaining billing days.
+- Downgrades take effect at the next billing cycle renewal date.
+- No cancellation fees ever — downgrade or cancel anytime.
+
+---
+
+TRIAL AND REFUND WINDOW
+------------------------
+CloudBox does not offer a traditional free trial for paid plans. However, all first-time paid plan purchases carry a 7-day money-back guarantee. If you are not satisfied within 7 days of your first purchase, you may request a full refund. This applies only to first-time purchases and is not available on renewals or add-ons.
+
+---
+
+PAYMENT METHODS ACCEPTED
+-------------------------
+- Credit Cards: Visa, Mastercard, American Express
+- Debit Cards: All major debit cards
+- UPI (India): Google Pay, PhonePe, Paytm
+- Net Banking: All major Indian and international banks
+- International cards with automatic currency conversion
+
+All payment data is processed under PCI-DSS Level 1 compliance. CloudBox does not store raw card numbers.

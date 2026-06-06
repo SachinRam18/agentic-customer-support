@@ -1,0 +1,23 @@
+# CloudBox Agentic Customer Support — Python Dependencies
+
+# Web framework
+fastapi
+uvicorn[standard]
+
+# Google Gemini AI SDK
+google-genai
+
+# Environment variable management
+python-dotenv
+
+# HTTP requests (for OpenRouter fallback client)
+requests
+
+# Pydantic (used by FastAPI models)
+pydantic
+
+# RAG — Vector store
+chromadb
+
+# RAG — Embedding model (runs fully offline, ~90 MB)
+sentence-transformers
